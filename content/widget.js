@@ -11,6 +11,8 @@
  * - Never stores its own copy of truth; always fetches latest from background
  */
 
+console.log('[FocusPulse] Content script loaded');
+
 let widgetContainer = null;
 let currentState = null;
 let isDragging = false;
@@ -24,10 +26,18 @@ function initializeWidget() {
   chrome.runtime.sendMessage(
     { type: 'GET_STATE' },
     (response) => {
-      if (response.success) {
+      if (chrome.runtime.lastError) {
+        console.error('[FocusPulse] Message error:', chrome.runtime.lastError);
+        return;
+      }
+
+      if (response && response.success) {
         currentState = response.state;
         createWidget();
         setupStateListeners();
+        console.log('[FocusPulse] Widget initialized successfully');
+      } else {
+        console.error('[FocusPulse] Failed to get state:', response);
       }
     }
   );
