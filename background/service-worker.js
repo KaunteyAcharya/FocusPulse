@@ -270,6 +270,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
  * Listen for keyboard commands
  */
 chrome.commands.onCommand.addListener((command) => {
+  console.log('[FocusPulse] Keyboard command:', command);
+
   const colorMap = {
     'focus-green': 'green',
     'focus-audio': 'blue',
@@ -280,19 +282,27 @@ chrome.commands.onCommand.addListener((command) => {
   const color = colorMap[command];
   if (color) {
     (async () => {
-      if (color === 'orange') {
-        // For orange, send a message to all tabs to prompt
-        const tabs = await chrome.tabs.query({});
-        tabs.forEach((tab) => {
-          chrome.tabs.sendMessage(
-            tab.id,
-            { type: 'KEYBOARD_ORANGE_PROMPT' }
-          ).catch(() => {});
-        });
-      } else {
-        // For other colors, just switch
-        await handleColorSwitch(color);
-        broadcastStateToAllTabs();
+      try {
+        await initializeState();
+        console.log('[FocusPulse] Processing keyboard command for:', color);
+
+        if (color === 'orange') {
+          // For orange, send a message to all tabs to prompt
+          const tabs = await chrome.tabs.query({});
+          console.log('[FocusPulse] Sending orange prompt to', tabs.length, 'tabs');
+          tabs.forEach((tab) => {
+            chrome.tabs.sendMessage(
+              tab.id,
+              { type: 'KEYBOARD_ORANGE_PROMPT' }
+            ).catch(() => {});
+          });
+        } else {
+          // For other colors, just switch
+          await handleColorSwitch(color);
+          console.log('[FocusPulse] Color switched to:', color);
+        }
+      } catch (error) {
+        console.error('[FocusPulse] Command error:', error);
       }
     })();
   }
