@@ -33,28 +33,28 @@
     "focus-green": {
       "suggested_key": {
         "default": "Alt+1",
-        "mac": "Cmd+1"
+        "mac": "MacCtrl+1"
       },
       "description": "Log as Focus (Green)"
     },
     "focus-audio": {
       "suggested_key": {
         "default": "Alt+2",
-        "mac": "Cmd+2"
+        "mac": "MacCtrl+2"
       },
       "description": "Log as Audio (Blue)"
     },
     "focus-distracted": {
       "suggested_key": {
         "default": "Alt+3",
-        "mac": "Cmd+3"
+        "mac": "MacCtrl+3"
       },
       "description": "Log as Distracted (Orange)"
     },
     "focus-break": {
       "suggested_key": {
         "default": "Alt+4",
-        "mac": "Cmd+4"
+        "mac": "MacCtrl+4"
       },
       "description": "Log as Break (Red)"
     }
