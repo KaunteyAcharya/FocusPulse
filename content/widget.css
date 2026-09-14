@@ -8,7 +8,8 @@
 #focuspulse-widget {
   position: fixed;
   z-index: 2147483647; /* Highest z-index to stay on top */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
   user-select: none;
   cursor: grab;
   -webkit-user-select: none;
@@ -68,10 +69,11 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   padding: 16px;
   width: 280px;
-  color: #1f2937;
+  color: #000000;
   box-sizing: border-box;
   margin: 0;
   line-height: 1.5;
+  font-weight: 400;
 }
 
 /* Account for dark mode if browser has it */
@@ -101,11 +103,11 @@
 }
 
 .widget-title {
-  font-weight: 600;
+  font-weight: 400;
   font-size: 14px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  opacity: 0.8;
+  color: #000000;
 }
 
 .widget-collapse-btn {
@@ -151,12 +153,12 @@
   background: rgba(255, 255, 255, 0.05);
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 11px;
-  font-weight: 500;
-  color: currentColor;
+  font-size: 12px;
+  font-weight: 400;
+  color: #000000;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  border-box: box-sizing;
+  box-sizing: border-box;
   margin: 0;
   min-height: 56px;
 }
@@ -286,10 +288,10 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 6px;
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 400;
   text-align: center;
-  opacity: 0.75;
+  color: #000000;
 }
 
 .stat-label {
