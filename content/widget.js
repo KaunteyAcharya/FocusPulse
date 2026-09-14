@@ -65,7 +65,10 @@ function createWidget() {
       <div class="widget-panel">
         <div class="widget-header">
           <span class="widget-title"><span style="color: #10b981;">focus</span><span style="color: #ef4444;">pulse</span></span>
-          <button class="widget-collapse-btn" aria-label="Collapse widget">-</button>
+          <div class="widget-header-buttons">
+            <button class="widget-dashboard-btn" aria-label="Open dashboard" title="Dashboard">📊</button>
+            <button class="widget-collapse-btn" aria-label="Collapse widget">−</button>
+          </div>
         </div>
         <div class="widget-buttons">
           <button class="color-btn green-btn ${greenActive}" data-color="green" title="Green: Deep Focus">
@@ -134,6 +137,14 @@ function attachEventListeners() {
       }
     });
   });
+
+  const dashboardBtn = widgetContainer.querySelector('.widget-dashboard-btn');
+  if (dashboardBtn) {
+    dashboardBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showDashboard();
+    });
+  }
 
   const collapseBtn = widgetContainer.querySelector('.widget-collapse-btn');
   if (collapseBtn) {

@@ -10,6 +10,9 @@
  * All state persists to chrome.storage.local on every change.
  */
 
+// Import analytics utilities
+importScripts('analytics.js');
+
 const DEFAULT_STATE = {
   // Current state
   activeColor: 'red', // 'green', 'blue', 'orange', 'red'
@@ -236,6 +239,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         case 'GET_STATE':
           sendResponse({ success: true, state: currentState });
+          break;
+
+        case 'GET_ANALYTICS':
+          const analytics = getAnalyticsForPeriod(currentState.sessionHistory, message.period);
+          const { currentStreak } = calculateStreaks(currentState.sessionHistory);
+          sendResponse({
+            success: true,
+            analytics: {
+              ...analytics,
+              currentStreak: currentStreak
+            }
+          });
           break;
 
         default:

@@ -19,7 +19,8 @@
         "<all_urls>"
       ],
       "js": [
-        "content/widget.js"
+        "content/widget.js",
+        "content/dashboard.js"
       ],
       "css": [
         "content/widget.css"
