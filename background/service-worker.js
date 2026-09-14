@@ -15,6 +15,7 @@ const DEFAULT_STATE = {
   activeColor: 'red', // 'green', 'blue', 'orange', 'red'
   sessionStartTime: null,
   widgetPosition: { x: 20, y: 20 },
+  widgetSize: { width: 280, height: 'auto' },
   isCollapsed: false,
 
   // Today's accumulated time (in seconds)
@@ -75,6 +76,7 @@ async function saveState() {
     activeColor: currentState.activeColor,
     sessionStartTime: currentState.sessionStartTime,
     widgetPosition: currentState.widgetPosition,
+    widgetSize: currentState.widgetSize,
     isCollapsed: currentState.isCollapsed,
     todaysSessions: currentState.todaysSessions,
     lastSessionDate: currentState.lastSessionDate,
@@ -161,6 +163,15 @@ async function handlePositionUpdate(position) {
 }
 
 /**
+ * Update widget size (called when user resizes widget)
+ */
+async function handleSizeUpdate(size) {
+  await initializeState();
+  currentState.widgetSize = size;
+  await saveState();
+}
+
+/**
  * Toggle collapsed state
  */
 async function handleToggleCollapsed() {
@@ -210,6 +221,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         case 'POSITION_UPDATE':
           await handlePositionUpdate(message.position);
+          sendResponse({ success: true });
+          break;
+
+        case 'SIZE_UPDATE':
+          await handleSizeUpdate(message.size);
           sendResponse({ success: true });
           break;
 

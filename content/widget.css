@@ -62,11 +62,11 @@
    ============================================================================ */
 
 .widget-panel {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(15px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   padding: 16px;
   width: 280px;
   color: #000000;
@@ -74,6 +74,10 @@
   margin: 0;
   line-height: 1.5;
   font-weight: 400;
+  resize: both;
+  overflow: auto;
+  min-width: 220px;
+  min-height: 200px;
 }
 
 /* Account for dark mode if browser has it */

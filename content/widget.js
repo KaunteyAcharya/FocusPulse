@@ -43,6 +43,12 @@ function createWidget() {
   widgetContainer.style.left = currentState.widgetPosition.x + 'px';
   widgetContainer.style.top = currentState.widgetPosition.y + 'px';
 
+  // Restore saved size
+  if (currentState.widgetSize) {
+    widgetContainer.style.width = currentState.widgetSize.width + 'px';
+    widgetContainer.style.height = currentState.widgetSize.height + 'px';
+  }
+
   if (currentState.isCollapsed) {
     widgetContainer.innerHTML = `
       <div class="widget-pill">
@@ -99,6 +105,26 @@ function createWidget() {
 
   document.body.appendChild(widgetContainer);
   attachEventListeners();
+  setupResizeObserver();
+}
+
+function setupResizeObserver() {
+  if (!widgetContainer) return;
+
+  const resizeObserver = new ResizeObserver(() => {
+    const width = widgetContainer.offsetWidth;
+    const height = widgetContainer.offsetHeight;
+
+    chrome.runtime.sendMessage(
+      {
+        type: 'SIZE_UPDATE',
+        size: { width: width, height: height }
+      },
+      () => {}
+    );
+  });
+
+  resizeObserver.observe(widgetContainer);
 }
 
 function attachEventListeners() {
