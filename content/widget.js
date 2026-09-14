@@ -64,25 +64,25 @@ function createWidget() {
     widgetContainer.innerHTML = `
       <div class="widget-panel">
         <div class="widget-header">
-          <span class="widget-title">FocusPulse</span>
+          <span class="widget-title"><span style="color: #10b981;">focus</span><span style="color: #ef4444;">pulse</span></span>
           <button class="widget-collapse-btn" aria-label="Collapse widget">-</button>
         </div>
         <div class="widget-buttons">
           <button class="color-btn green-btn ${greenActive}" data-color="green" title="Green: Deep Focus">
-            <span class="btn-circle"></span>
-            <span class="btn-label">Focus</span>
+            <span class="btn-label" style="color: #10b981;">${formatTime(currentState.todaysSessions.green)}</span>
+            <span class="btn-label" style="color: #10b981; font-size: 10px;">focus</span>
           </button>
           <button class="color-btn blue-btn ${blueActive}" data-color="blue" title="Blue: Working + Audio">
-            <span class="btn-circle"></span>
-            <span class="btn-label">Audio</span>
+            <span class="btn-label" style="color: #3b82f6;">${formatTime(currentState.todaysSessions.blue)}</span>
+            <span class="btn-label" style="color: #3b82f6; font-size: 10px;">audio</span>
           </button>
           <button class="color-btn orange-btn ${orangeActive}" data-color="orange" title="Orange: Distracted">
-            <span class="btn-circle"></span>
-            <span class="btn-label">Distracted</span>
+            <span class="btn-label" style="color: #f97316;">${formatTime(currentState.todaysSessions.orange)}</span>
+            <span class="btn-label" style="color: #f97316; font-size: 10px;">distracted</span>
           </button>
           <button class="color-btn red-btn ${redActive}" data-color="red" title="Red: Break">
-            <span class="btn-circle"></span>
-            <span class="btn-label">Break</span>
+            <span class="btn-label" style="color: #ef4444;">${formatTime(currentState.todaysSessions.red)}</span>
+            <span class="btn-label" style="color: #ef4444; font-size: 10px;">break</span>
           </button>
         </div>
         <div class="widget-stats">
@@ -91,12 +91,6 @@ function createWidget() {
             <div class="stat-segment blue-seg" style="width: ${getTodayPercentage('blue')}%"></div>
             <div class="stat-segment orange-seg" style="width: ${getTodayPercentage('orange')}%"></div>
             <div class="stat-segment red-seg" style="width: ${getTodayPercentage('red')}%"></div>
-          </div>
-          <div class="stat-labels">
-            <span class="stat-label">G: ${formatTime(currentState.todaysSessions.green)}</span>
-            <span class="stat-label">B: ${formatTime(currentState.todaysSessions.blue)}</span>
-            <span class="stat-label">O: ${formatTime(currentState.todaysSessions.orange)}</span>
-            <span class="stat-label">R: ${formatTime(currentState.todaysSessions.red)}</span>
           </div>
         </div>
       </div>

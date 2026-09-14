@@ -62,11 +62,11 @@
    ============================================================================ */
 
 .widget-panel {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(15px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.005);
+  backdrop-filter: blur(8px) saturate(100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-shadow: none;
   padding: 16px;
   width: 280px;
   color: #000000;
@@ -150,21 +150,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px;
+  gap: 3px;
+  padding: 12px 8px;
   border: 2px solid transparent;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
   color: #000000;
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 0.3px;
   box-sizing: border-box;
   margin: 0;
-  min-height: 56px;
+  min-height: 48px;
 }
 
 .color-btn:hover {
@@ -214,10 +214,7 @@
 }
 
 .btn-circle {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: currentColor;
+  display: none;
 }
 
 .color-btn.green-btn .btn-circle {
@@ -237,7 +234,6 @@
 }
 
 .btn-label {
-  font-size: 10px;
   white-space: nowrap;
 }
 
@@ -289,18 +285,11 @@
 }
 
 .stat-labels {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 400;
-  text-align: center;
-  color: #000000;
+  display: none;
 }
 
 .stat-label {
-  padding: 4px 0;
-  transition: opacity 0.3s ease;
+  display: none;
 }
 
 /* ============================================================================
