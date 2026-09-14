@@ -57,44 +57,52 @@ function createWidget() {
     `;
   } else {
     const greenActive = currentState.activeColor === 'green' ? 'active' : '';
-    const blueActive = currentState.activeColor === 'blue' ? 'active' : '';
     const orangeActive = currentState.activeColor === 'orange' ? 'active' : '';
     const redActive = currentState.activeColor === 'red' ? 'active' : '';
+    const blueActive = currentState.activeColor === 'blue' ? 'active' : '';
+
+    const totalTime = currentState.todaysSessions.green + currentState.todaysSessions.blue +
+                      currentState.todaysSessions.orange + currentState.todaysSessions.red;
 
     widgetContainer.innerHTML = `
       <div class="widget-panel">
         <div class="widget-header">
-          <span class="widget-title"><span style="color: #10b981;">focus</span><span style="color: #ef4444;">pulse</span></span>
+          <span class="widget-title">focuspulse</span>
           <div class="widget-header-buttons">
+            <button class="widget-refresh-btn" aria-label="Refresh" title="Refresh">🔄</button>
             <button class="widget-dashboard-btn" aria-label="Open dashboard" title="Dashboard">📊</button>
             <button class="widget-settings-btn" aria-label="Settings" title="Settings">⚙️</button>
             <button class="widget-collapse-btn" aria-label="Collapse widget">−</button>
           </div>
         </div>
         <div class="widget-buttons">
-          <button class="color-btn green-btn ${greenActive}" data-color="green" title="Green: Deep Focus">
+          <button class="color-btn green-btn ${greenActive}" data-color="green" title="Flow: Deep Focus">
             <span class="btn-label" style="color: #10b981;">${formatTime(currentState.todaysSessions.green)}</span>
-            <span class="btn-label" style="color: #10b981; font-size: 10px;">focus</span>
+            <span class="btn-label" style="color: #10b981; font-size: 10px;">flow</span>
+            <span class="btn-percent" style="color: #10b981;">${totalTime > 0 ? Math.round((currentState.todaysSessions.green / totalTime) * 100) : 0}%</span>
           </button>
-          <button class="color-btn blue-btn ${blueActive}" data-color="blue" title="Blue: Working + Audio">
-            <span class="btn-label" style="color: #3b82f6;">${formatTime(currentState.todaysSessions.blue)}</span>
-            <span class="btn-label" style="color: #3b82f6; font-size: 10px;">audio</span>
-          </button>
-          <button class="color-btn orange-btn ${orangeActive}" data-color="orange" title="Orange: Distracted">
+          <button class="color-btn orange-btn ${orangeActive}" data-color="orange" title="Noise: Working + Audio">
             <span class="btn-label" style="color: #f97316;">${formatTime(currentState.todaysSessions.orange)}</span>
-            <span class="btn-label" style="color: #f97316; font-size: 10px;">distracted</span>
+            <span class="btn-label" style="color: #f97316; font-size: 10px;">noise</span>
+            <span class="btn-percent" style="color: #f97316;">${totalTime > 0 ? Math.round((currentState.todaysSessions.orange / totalTime) * 100) : 0}%</span>
           </button>
-          <button class="color-btn red-btn ${redActive}" data-color="red" title="Red: Break">
+          <button class="color-btn red-btn ${redActive}" data-color="red" title="Lost: Unintended Distraction">
             <span class="btn-label" style="color: #ef4444;">${formatTime(currentState.todaysSessions.red)}</span>
-            <span class="btn-label" style="color: #ef4444; font-size: 10px;">break</span>
+            <span class="btn-label" style="color: #ef4444; font-size: 10px;">lost</span>
+            <span class="btn-percent" style="color: #ef4444;">${totalTime > 0 ? Math.round((currentState.todaysSessions.red / totalTime) * 100) : 0}%</span>
+          </button>
+          <button class="color-btn blue-btn ${blueActive}" data-color="blue" title="Rest: Intentional Break">
+            <span class="btn-label" style="color: #3b82f6;">${formatTime(currentState.todaysSessions.blue)}</span>
+            <span class="btn-label" style="color: #3b82f6; font-size: 10px;">rest</span>
+            <span class="btn-percent" style="color: #3b82f6;">${totalTime > 0 ? Math.round((currentState.todaysSessions.blue / totalTime) * 100) : 0}%</span>
           </button>
         </div>
         <div class="widget-stats">
           <div class="stat-bar">
             <div class="stat-segment green-seg" style="width: ${getTodayPercentage('green')}%"></div>
-            <div class="stat-segment blue-seg" style="width: ${getTodayPercentage('blue')}%"></div>
             <div class="stat-segment orange-seg" style="width: ${getTodayPercentage('orange')}%"></div>
             <div class="stat-segment red-seg" style="width: ${getTodayPercentage('red')}%"></div>
+            <div class="stat-segment blue-seg" style="width: ${getTodayPercentage('blue')}%"></div>
           </div>
         </div>
       </div>
@@ -138,6 +146,25 @@ function attachEventListeners() {
       }
     });
   });
+
+  const refreshBtn = widgetContainer.querySelector('.widget-refresh-btn');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      chrome.runtime.sendMessage(
+        { type: 'GET_STATE' },
+        (response) => {
+          if (response && response.success) {
+            currentState = response.state;
+            updateWidget();
+            if (typeof showToast === 'function') {
+              showToast('✓ Updated', 'success', 1500);
+            }
+          }
+        }
+      );
+    });
+  }
 
   const dashboardBtn = widgetContainer.querySelector('.widget-dashboard-btn');
   if (dashboardBtn) {

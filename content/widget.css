@@ -87,22 +87,22 @@
    ============================================================================ */
 
 .widget-panel {
-  background: rgba(255, 255, 255, 0.005);
-  backdrop-filter: blur(8px) saturate(100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
+  border-radius: 12px;
   box-shadow: none;
-  padding: 16px;
-  width: 280px;
+  padding: 12px;
+  width: 320px;
   color: #000000;
   box-sizing: border-box;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.4;
   font-weight: 400;
   resize: both;
   overflow: auto;
-  min-width: 220px;
-  min-height: 200px;
+  min-width: 240px;
+  min-height: 220px;
 }
 
 /* Account for dark mode if browser has it */
@@ -145,23 +145,25 @@
   color: #000000;
 }
 
+.widget-refresh-btn,
 .widget-dashboard-btn,
 .widget-settings-btn {
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 0.6;
   transition: opacity 0.2s ease;
   padding: 0;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: currentColor;
 }
 
+.widget-refresh-btn:hover,
 .widget-dashboard-btn:hover,
 .widget-settings-btn:hover {
   opacity: 1;
@@ -288,6 +290,12 @@
 
 .btn-label {
   white-space: nowrap;
+}
+
+.btn-percent {
+  font-size: 9px;
+  font-weight: 600;
+  opacity: 0.7;
 }
 
 /* ============================================================================
