@@ -225,13 +225,10 @@ function updateWidget() {
     const buttons = widgetContainer.querySelectorAll('.color-btn');
     buttons.forEach((btn) => {
       btn.classList.remove('active');
+      if (btn.dataset.color === currentState.activeColor) {
+        btn.classList.add('active');
+      }
     });
-    const activeBtn = widgetContainer.querySelector(
-      `.color-btn[data-color="${currentState.activeColor}"]`
-    );
-    if (activeBtn) {
-      activeBtn.classList.add('active');
-    }
 
     const segments = widgetContainer.querySelectorAll('.stat-segment');
     if (segments.length === 4) {
