@@ -67,6 +67,7 @@ function createWidget() {
           <span class="widget-title"><span style="color: #10b981;">focus</span><span style="color: #ef4444;">pulse</span></span>
           <div class="widget-header-buttons">
             <button class="widget-dashboard-btn" aria-label="Open dashboard" title="Dashboard">📊</button>
+            <button class="widget-settings-btn" aria-label="Settings" title="Settings">⚙️</button>
             <button class="widget-collapse-btn" aria-label="Collapse widget">−</button>
           </div>
         </div>
@@ -143,6 +144,16 @@ function attachEventListeners() {
     dashboardBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       showDashboard();
+    });
+  }
+
+  const settingsBtn = widgetContainer.querySelector('.widget-settings-btn');
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (typeof showSettings === 'function') {
+        showSettings();
+      }
     });
   }
 
@@ -359,6 +370,11 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeWidget);
 } else {
   initializeWidget();
+}
+
+// Initialize idle detection
+if (typeof initializeIdleDetection === 'function') {
+  initializeIdleDetection();
 }
 
 document.addEventListener('visibilitychange', () => {

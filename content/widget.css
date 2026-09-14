@@ -145,7 +145,8 @@
   color: #000000;
 }
 
-.widget-dashboard-btn {
+.widget-dashboard-btn,
+.widget-settings-btn {
   background: none;
   border: none;
   font-size: 18px;
@@ -161,7 +162,8 @@
   color: currentColor;
 }
 
-.widget-dashboard-btn:hover {
+.widget-dashboard-btn:hover,
+.widget-settings-btn:hover {
   opacity: 1;
 }
 

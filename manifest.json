@@ -20,6 +20,8 @@
       ],
       "js": [
         "content/toasts.js",
+        "content/settings.js",
+        "content/idle.js",
         "content/widget.js",
         "content/dashboard.js"
       ],
