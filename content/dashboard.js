@@ -163,13 +163,11 @@ function updateDashboardDisplay(analytics) {
 
   // Update trend
   const trendEl = dashboardOverlay.querySelector('#trend-value');
-  if (trend) {
-    trendEl.textContent = trend.direction === 'up' ? '↑ ' + trend.percentage + '%' :
-                           trend.direction === 'down' ? '↓ ' + trend.percentage + '%' :
-                           '→ 0%';
-  } else {
-    trendEl.textContent = 'N/A';
-  }
+  const trendText = trend ?
+    (trend.direction === 'up' ? '↑ ' + trend.percentage + '%' :
+     trend.direction === 'down' ? '↓ ' + trend.percentage + '%' :
+     '→ 0%') : 'N/A';
+  trendEl.textContent = trendText;
 
   // Update streak
   const streakEl = dashboardOverlay.querySelector('#streak-value');
@@ -428,6 +426,26 @@ function getDashboardCSS() {
       font-size: 18px;
       font-weight: 600;
       color: #1f2937;
+      transition: all 0.3s ease;
+    }
+
+    .metric-value.animating {
+      animation: metricPulse 0.6s ease;
+    }
+
+    @keyframes metricPulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .dashboard-timeline h3 {

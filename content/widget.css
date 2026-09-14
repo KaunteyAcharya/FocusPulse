@@ -44,9 +44,34 @@
 }
 
 .widget-pill:hover {
-  transform: scale(1.05);
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  animation: pillHover 0.3s ease;
+}
+
+@keyframes pillHover {
+  0% {
+    transform: scale(1);
+    background: rgba(255, 255, 255, 0.03);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.widget-pill:active {
+  animation: pillPress 0.15s ease;
+}
+
+@keyframes pillPress {
+  0% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(0.95);
+  }
 }
 
 .pill-dot {

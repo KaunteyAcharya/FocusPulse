@@ -267,6 +267,38 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 /**
+ * Listen for keyboard commands
+ */
+chrome.commands.onCommand.addListener((command) => {
+  const colorMap = {
+    'focus-green': 'green',
+    'focus-audio': 'blue',
+    'focus-distracted': 'orange',
+    'focus-break': 'red'
+  };
+
+  const color = colorMap[command];
+  if (color) {
+    (async () => {
+      if (color === 'orange') {
+        // For orange, send a message to all tabs to prompt
+        const tabs = await chrome.tabs.query({});
+        tabs.forEach((tab) => {
+          chrome.tabs.sendMessage(
+            tab.id,
+            { type: 'KEYBOARD_ORANGE_PROMPT' }
+          ).catch(() => {});
+        });
+      } else {
+        // For other colors, just switch
+        await handleColorSwitch(color);
+        broadcastStateToAllTabs();
+      }
+    })();
+  }
+});
+
+/**
  * Initialize on service worker startup
  */
 initializeState();

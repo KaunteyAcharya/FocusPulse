@@ -204,6 +204,17 @@ function switchColor(color) {
       if (response && response.success) {
         currentState = response.state;
         updateWidget();
+
+        // Show toast feedback
+        if (typeof showToast === 'function') {
+          if (color === 'green') {
+            showToast('🎯 Go get em!', 'success', 2000);
+          } else if (color === 'blue') {
+            showToast('🎵 Good work with focus!', 'success', 2000);
+          } else if (color === 'red') {
+            showToast('Take care of yourself 💚', 'info', 2000);
+          }
+        }
       }
     }
   );
@@ -226,6 +237,11 @@ function promptOrangeLogging() {
         if (response && response.success) {
           currentState = response.state;
           updateWidget();
+
+          // Show supportive message
+          if (typeof showOrangeSupport === 'function') {
+            showOrangeSupport(estimatedMinutes, estimatedMinutes + 10);
+          }
         }
       }
     );
@@ -284,6 +300,13 @@ function setupStateListeners() {
     if (message.type === 'STATE_UPDATE') {
       currentState = message.payload;
       updateWidget();
+
+      // Show encouragement if on green
+      if (typeof scheduleGreenToast === 'function') {
+        scheduleGreenToast(currentState);
+      }
+    } else if (message.type === 'KEYBOARD_ORANGE_PROMPT') {
+      promptOrangeLogging();
     }
   });
 
