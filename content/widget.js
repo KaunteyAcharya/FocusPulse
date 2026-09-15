@@ -185,7 +185,7 @@ function createWidget() {
       <div class="widget-header">
         <div class="widget-brand">
           <button class="widget-title" title="About FocusPulse">FocusPulse</button>
-          <span class="widget-tagline">Excellence follows integrity.</span>
+          <span class="widget-tagline">No lies. You are doing this for you.</span>
         </div>
         <div class="widget-header-buttons">
           <button class="icon-btn widget-refresh-btn" aria-label="Refresh" title="Refresh">${ICONS.refresh}</button>
