@@ -22,6 +22,7 @@
         "content/toasts.js",
         "content/settings.js",
         "content/idle.js",
+        "content/about.js",
         "content/widget.js",
         "content/dashboard.js"
       ],
@@ -37,28 +38,28 @@
         "default": "Alt+1",
         "mac": "MacCtrl+1"
       },
-      "description": "Log as Focus (Green)"
+      "description": "Log as Flow (Green)"
     },
     "focus-audio": {
       "suggested_key": {
         "default": "Alt+2",
         "mac": "MacCtrl+2"
       },
-      "description": "Log as Audio (Blue)"
+      "description": "Log as Noise (Orange)"
     },
     "focus-distracted": {
       "suggested_key": {
         "default": "Alt+3",
         "mac": "MacCtrl+3"
       },
-      "description": "Log as Distracted (Orange)"
+      "description": "Log as Lost (Red)"
     },
     "focus-break": {
       "suggested_key": {
         "default": "Alt+4",
         "mac": "MacCtrl+4"
       },
-      "description": "Log as Break (Red)"
+      "description": "Log as Rest (Blue)"
     }
   }
 }

@@ -15,11 +15,15 @@ importScripts('analytics.js');
 
 const DEFAULT_STATE = {
   // Current state
-  activeColor: 'red', // 'green', 'blue', 'orange', 'red'
+  activeColor: null, // null = nothing active/paused, else 'green' | 'blue' | 'orange' | 'red'
   sessionStartTime: null,
   widgetPosition: { x: 20, y: 20 },
   widgetSize: { width: 280, height: 'auto' },
   isCollapsed: false,
+
+  // Session timing (for total time since day started)
+  dayStartTime: null,
+  dayEndTime: null,
 
   // Today's accumulated time (in seconds)
   todaysSessions: {
@@ -64,8 +68,10 @@ async function initializeState() {
       orange: 0,
       red: 0
     };
-    currentState.activeColor = 'red';
+    currentState.activeColor = null;
     currentState.sessionStartTime = null;
+    currentState.dayStartTime = null;
+    currentState.dayEndTime = null;
   }
 
   stateInitialized = true;
@@ -81,6 +87,8 @@ async function saveState() {
     widgetPosition: currentState.widgetPosition,
     widgetSize: currentState.widgetSize,
     isCollapsed: currentState.isCollapsed,
+    dayStartTime: currentState.dayStartTime,
+    dayEndTime: currentState.dayEndTime,
     todaysSessions: currentState.todaysSessions,
     lastSessionDate: currentState.lastSessionDate,
     sessionHistory: currentState.sessionHistory
@@ -97,7 +105,7 @@ async function handleColorSwitch(newColor) {
   const now = Date.now();
 
   // If there was a previous session, log its time
-  if (currentState.sessionStartTime !== null) {
+  if (currentState.sessionStartTime !== null && currentState.activeColor) {
     const elapsedSeconds = Math.floor(
       (now - currentState.sessionStartTime) / 1000
     );
@@ -113,6 +121,12 @@ async function handleColorSwitch(newColor) {
     });
   }
 
+  // Auto-mark day start on first activity if not set
+  if (!currentState.dayStartTime) {
+    currentState.dayStartTime = now;
+    currentState.dayEndTime = null;
+  }
+
   // Switch to new color and start new session
   currentState.activeColor = newColor;
   currentState.sessionStartTime = now;
@@ -122,21 +136,35 @@ async function handleColorSwitch(newColor) {
 }
 
 /**
- * Handle orange logging with penalty
+ * Reset today's timers (keeps history intact)
+ */
+async function handleResetTimers() {
+  await initializeState();
+  currentState.todaysSessions = { green: 0, blue: 0, orange: 0, red: 0 };
+  currentState.activeColor = null;
+  currentState.sessionStartTime = null;
+  currentState.dayStartTime = null;
+  currentState.dayEndTime = null;
+  await saveState();
+  broadcastStateToAllTabs();
+}
+
+/**
+ * Handle red logging with penalty
  * User estimates minutes lost, we add 10-minute penalty
  */
-async function handleOrangeLogging(estimatedMinutesLost) {
+async function handleRedLogging(estimatedMinutesLost) {
   await initializeState();
 
   const totalMinutes = estimatedMinutesLost + 10; // Add 10-minute penalty
   const totalSeconds = totalMinutes * 60;
 
-  currentState.todaysSessions.orange += totalSeconds;
+  currentState.todaysSessions.red += totalSeconds;
 
   // Log to session history
   const now = Date.now();
   currentState.sessionHistory.push({
-    color: 'orange',
+    color: 'red',
     startTime: now - totalSeconds * 1000,
     endTime: now,
     durationSeconds: totalSeconds,
@@ -145,9 +173,9 @@ async function handleOrangeLogging(estimatedMinutesLost) {
     date: new Date().toDateString()
   });
 
-  // If orange was active, end that session and switch to red
-  if (currentState.activeColor === 'orange') {
-    currentState.activeColor = 'red';
+  // If red was active, end that session and switch to blue
+  if (currentState.activeColor === 'red') {
+    currentState.activeColor = 'blue';
     currentState.sessionStartTime = now;
   }
 
@@ -217,8 +245,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           sendResponse({ success: true, state: currentState });
           break;
 
-        case 'ORANGE_LOGGING':
-          await handleOrangeLogging(message.estimatedMinutesLost);
+        case 'RED_LOGGING':
+          await handleRedLogging(message.estimatedMinutesLost);
           sendResponse({ success: true, state: currentState });
           break;
 
@@ -234,6 +262,43 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         case 'TOGGLE_COLLAPSED':
           await handleToggleCollapsed();
+          sendResponse({ success: true, state: currentState });
+          break;
+
+        case 'DAY_START':
+          currentState.dayStartTime = Date.now();
+          currentState.dayEndTime = null;
+          await saveState();
+          broadcastStateToAllTabs();
+          sendResponse({ success: true, state: currentState });
+          break;
+
+        case 'DAY_END': {
+          const now = Date.now();
+          currentState.dayEndTime = now;
+          // End the current session by committing its running time
+          if (currentState.sessionStartTime !== null && currentState.activeColor) {
+            const elapsedSeconds = Math.floor((now - currentState.sessionStartTime) / 1000);
+            currentState.todaysSessions[currentState.activeColor] += elapsedSeconds;
+            currentState.sessionHistory.push({
+              color: currentState.activeColor,
+              startTime: currentState.sessionStartTime,
+              endTime: now,
+              durationSeconds: elapsedSeconds,
+              date: new Date().toDateString()
+            });
+          }
+          // Unmark everything so nothing stays active or highlighted after ending the day
+          currentState.activeColor = null;
+          currentState.sessionStartTime = null;
+          await saveState();
+          broadcastStateToAllTabs();
+          sendResponse({ success: true, state: currentState });
+          break;
+        }
+
+        case 'RESET_TIMERS':
+          await handleResetTimers();
           sendResponse({ success: true, state: currentState });
           break;
 
@@ -274,9 +339,9 @@ chrome.commands.onCommand.addListener((command) => {
 
   const colorMap = {
     'focus-green': 'green',
-    'focus-audio': 'blue',
-    'focus-distracted': 'orange',
-    'focus-break': 'red'
+    'focus-audio': 'orange',
+    'focus-distracted': 'red',
+    'focus-break': 'blue'
   };
 
   const color = colorMap[command];
@@ -286,14 +351,14 @@ chrome.commands.onCommand.addListener((command) => {
         await initializeState();
         console.log('[FocusPulse] Processing keyboard command for:', color);
 
-        if (color === 'orange') {
-          // For orange, send a message to all tabs to prompt
+        if (color === 'red') {
+          // For red, send a message to all tabs to prompt
           const tabs = await chrome.tabs.query({});
-          console.log('[FocusPulse] Sending orange prompt to', tabs.length, 'tabs');
+          console.log('[FocusPulse] Sending red prompt to', tabs.length, 'tabs');
           tabs.forEach((tab) => {
             chrome.tabs.sendMessage(
               tab.id,
-              { type: 'KEYBOARD_ORANGE_PROMPT' }
+              { type: 'KEYBOARD_RED_PROMPT' }
             ).catch(() => {});
           });
         } else {

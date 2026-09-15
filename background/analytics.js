@@ -40,7 +40,8 @@ function getDateRanges() {
     lastWeek: { start: lastWeekStart, end: weekStart },
     thisMonth: { start: monthStart, end: new Date(monthStart.getTime() + 30 * 86400000) },
     lastMonth: { start: lastMonthStart, end: monthStart },
-    thisYear: { start: yearStart, end: new Date(today.getTime() + 86400000) }
+    thisYear: { start: yearStart, end: new Date(today.getTime() + 86400000) },
+    allTime: { start: new Date(0), end: new Date(today.getTime() + 86400000) }
   };
 }
 
@@ -69,7 +70,11 @@ function calculatePeriodTotals(sessions) {
 
 /**
  * Calculate net productivity score
- * Formula: green + 0.5×blue − orange − 0.25×red (normalized to percentage)
+ * Formula: (Flow − Lost + 0.25×Noise) / total tracked × 100, clamped 0–100.
+ * Noise (working while listening to audio, etc.) earns partial credit rather
+ * than being fully penalised; Lost is the only fully negative state; Rest is
+ * neutral (counted in the denominator but neither rewarded nor penalised).
+ *   green = Flow, orange = Noise, red = Lost, blue = Rest
  */
 function calculateNetProductivityScore(totals) {
   const total =
@@ -80,15 +85,8 @@ function calculateNetProductivityScore(totals) {
 
   if (total === 0) return 0;
 
-  const score =
-    totals.green +
-    0.5 * totals.blue -
-    totals.orange -
-    0.25 * totals.red;
-
-  // Normalize to 0-100 scale
-  const maxScore = total; // Maximum possible score if all time is green
-  const normalizedScore = (score / maxScore) * 100;
+  const score = totals.green - totals.red + 0.25 * totals.orange;
+  const normalizedScore = (score / total) * 100;
 
   return Math.max(0, Math.min(100, normalizedScore));
 }
@@ -209,27 +207,39 @@ function getAnalyticsForPeriod(sessionHistory, periodKey) {
   const totals = calculatePeriodTotals(sessions);
 
   let previousTotals = null;
+  let previousLabel = null;
   let trend = null;
 
-  // Calculate trend
+  // Identify the comparison period
   if (periodKey === 'today') {
-    const yesterday = getSessionsInRange(sessionHistory, ranges.yesterday.start, ranges.yesterday.end);
-    previousTotals = calculatePeriodTotals(yesterday);
+    previousTotals = calculatePeriodTotals(getSessionsInRange(sessionHistory, ranges.yesterday.start, ranges.yesterday.end));
+    previousLabel = 'yesterday';
   } else if (periodKey === 'thisWeek') {
-    const lastWeek = getSessionsInRange(sessionHistory, ranges.lastWeek.start, ranges.lastWeek.end);
-    previousTotals = calculatePeriodTotals(lastWeek);
+    previousTotals = calculatePeriodTotals(getSessionsInRange(sessionHistory, ranges.lastWeek.start, ranges.lastWeek.end));
+    previousLabel = 'last week';
   } else if (periodKey === 'thisMonth') {
-    const lastMonth = getSessionsInRange(sessionHistory, ranges.lastMonth.start, ranges.lastMonth.end);
-    previousTotals = calculatePeriodTotals(lastMonth);
-  }
-
-  if (previousTotals) {
-    const currentGreenTotal = totals.green;
-    const previousGreenTotal = previousTotals.green;
-    trend = calculateTrend(currentGreenTotal, previousGreenTotal);
+    previousTotals = calculatePeriodTotals(getSessionsInRange(sessionHistory, ranges.lastMonth.start, ranges.lastMonth.end));
+    previousLabel = 'last month';
   }
 
   const efficiency = calculateEfficiency(totals);
+
+  // Trend = change in EFFICIENCY (percentage points) vs the previous period.
+  if (previousTotals) {
+    const prevTracked = previousTotals.green + previousTotals.blue + previousTotals.orange + previousTotals.red;
+    if (prevTracked === 0) {
+      trend = { direction: 'new', points: 0, vs: previousLabel };
+    } else {
+      const prevEff = calculateEfficiency(previousTotals);
+      const pts = efficiency - prevEff;
+      trend = {
+        direction: pts > 0 ? 'up' : pts < 0 ? 'down' : 'neutral',
+        points: Math.abs(pts),
+        vs: previousLabel
+      };
+    }
+  }
+
   const netScore = calculateNetProductivityScore(totals);
   const dayBreakdown = getDayBreakdown(sessions);
 

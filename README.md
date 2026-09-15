@@ -11,17 +11,17 @@ FocusPulse helps you build better focus habits by letting **you** decide what yo
 - 🟠 **Orange** = Mindless distraction / tab-switching (you estimate the time wasted, we add a 10-minute penalty)
 - 🔴 **Red** = Break / not productive
 
-**Why self-reporting?** Watching your own color ratio update in real-time creates a dopamine-driven feedback loop. You're not being tracked—you're tracking yourself, and that matters.
+**Why self-reporting?** Watching your own color ratio update in real-time creates a dopamine-driven feedback loop. You're not being tracked, you're tracking yourself, and that matters.
 
 ## ✨ Key Features (Phase 1 MVP)
 
-- ✅ **Persistent floating widget** that never disappears—stays visible across all tabs, even after browser restart
+- ✅ **Persistent floating widget** that never disappears. It stays visible across all tabs, even after browser restart
 - ✅ **4 color-coded buttons** to log your current activity state
 - ✅ **Live progress bar** showing today's time breakdown by color
 - ✅ **Freely draggable** anywhere on screen; position persists
 - ✅ **Collapsed "pill" mode** for a minimal footprint when you need less distraction
 - ✅ **Frosted-glass aesthetic** with blur, rounded corners, and subtle shadows
-- ✅ **100% local storage**—no backend, no account, no tracking by us
+- ✅ **100% local storage**, no backend, no account, no tracking by us
 - ✅ **MIT licensed** and open source
 
 ## 🚀 Installation & Testing
@@ -55,21 +55,21 @@ FocusPulse helps you build better focus habits by letting **you** decide what yo
 #### Test Dragging
 - Hover over the widget header (in expanded view) or the pill itself
 - Click and drag to move the widget anywhere on screen
-- **Reload the page** — the widget should stay in the exact position you left it
+- **Reload the page** and the widget should stay in the exact position you left it
 
 #### Test Persistence Across Tabs
 - **Open the widget in expanded mode** on this tab
 - **Open a new tab** (Ctrl+T or Cmd+T)
 - **Verify the widget appears on the new tab** with the same state (same color active, same time breakdown)
 - Click a different color on the new tab
-- **Go back to the first tab** — the widget should show the new color as active
+- **Go back to the first tab** and the widget should show the new color as active
 - ✅ This proves the widget state stays in sync across tabs!
 
 #### Test Collapsed/Expanded Toggle
 - Click the **−** (minus) button in the widget header to collapse it
 - The widget shrinks to a small colored dot (the "pill")
 - Click the pill to expand it again
-- Refresh the page — it stays in whatever mode you left it
+- Refresh the page and it stays in whatever mode you left it
 
 ## 🛠 How It Works (Architecture)
 
@@ -89,8 +89,8 @@ The **content script** (`content/widget.js`) runs on every tab and:
 1. **Fetches initial state** from the service worker on page load
 2. **Renders the widget** with the current state
 3. **Listens for state updates** via:
-   - `chrome.runtime.onMessage` — direct messages from the service worker when it broadcasts state changes
-   - `chrome.storage.onChanged` — detects storage changes (backup mechanism for multi-tab sync)
+   - `chrome.runtime.onMessage`: direct messages from the service worker when it broadcasts state changes
+   - `chrome.storage.onChanged`: detects storage changes (backup mechanism for multi-tab sync)
 4. **Sends user actions** (color clicks, drag position, collapse toggle) to the service worker
 5. **Updates the UI** based on the latest state
 

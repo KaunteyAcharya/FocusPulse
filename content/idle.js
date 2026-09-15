@@ -46,7 +46,13 @@ async function checkIdleStatus() {
   const idleThresholdMs = settings.idleThreshold * 60 * 1000;
   const timeSinceActivity = Date.now() - lastActivityTime;
 
-  if (timeSinceActivity > idleThresholdMs && !isIdle && currentState.activeColor !== 'red') {
+  // Only suggest a break when actively tracking something other than Rest
+  if (
+    timeSinceActivity > idleThresholdMs &&
+    !isIdle &&
+    currentState.activeColor &&
+    currentState.activeColor !== 'blue'
+  ) {
     showIdleSuggestion();
     isIdle = true;
   }

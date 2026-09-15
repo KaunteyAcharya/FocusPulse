@@ -124,16 +124,14 @@ function showToast(message, type = 'info', duration = 4000) {
  * Encouraging messages for green streaks (variable language)
  */
 const GREEN_ENCOURAGEMENTS = [
-  '🎯 Nice focus session going!',
-  '✨ You\'re in the zone!',
-  '💪 Keep it up—green time feels good!',
-  '🚀 Momentum building!',
-  '⚡ This focus streak is paying off!',
-  '🌟 You\'re killing it today!',
-  '🎪 The flow is real—keep going!',
-  '💯 Pure focus. Love to see it!',
-  '🔥 On a roll!',
-  '🎨 Deep work in progress!',
+  'Still in flow. That is rare air, stay in it.',
+  'Every minute here compounds. Keep going.',
+  'This is the work that actually counts.',
+  'Focus is holding. Do not break the spell.',
+  'You are building real momentum right now.',
+  'One more block. Future you will thank you.',
+  'Quiet mind, clear task. Beautiful.',
+  'This streak is where the results come from.',
 ];
 
 /**
@@ -209,14 +207,15 @@ function showPersonalBestCallout(metric, value, type) {
 }
 
 /**
- * Non-punitive message for orange logging
+ * Non-punitive message for red logging (Lost/Distracted tracking)
  */
-function showOrangeSupport(wastedMinutes, totalMinutes) {
+function showRedSupport(wastedMinutes, totalMinutes) {
+  const t = wastedMinutes + 10;
   const supportMessages = [
-    `${wastedMinutes + 10}m logged. Hey, it happens—refocus and let's get back to it! 💪`,
-    `OK, ${wastedMinutes + 10}m. That's human. Reset and pick green again. You've got this! 🌱`,
-    `Distraction noted (${wastedMinutes + 10}m). No judgment—just next time! Let's go. 🚀`,
-    `${wastedMinutes + 10}m of drift. It's a learning moment. Ready to go green? 🎯`,
+    `${t}m logged, penalty and all. Honesty is the whole point.`,
+    `${t}m down. You caught it, now start the next minute clean.`,
+    `Noted: ${t}m. No shame in the count, only in hiding it.`,
+    `${t}m logged. Drifting is human. Coming back is the skill.`,
   ];
 
   const message = supportMessages[Math.floor(Math.random() * supportMessages.length)];
